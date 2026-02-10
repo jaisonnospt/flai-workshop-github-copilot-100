@@ -21,6 +21,42 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 
 # In-memory activity database
 activities = {
+    "Basketball Team": {
+        "description": "Join our varsity basketball team and compete against other schools",
+        "schedule": "Mondays and Wednesdays, 4:00 PM - 6:00 PM",
+        "max_participants": 15,
+        "participants": ["james@mergington.edu", "alex@mergington.edu"]
+    },
+    "Track and Field": {
+        "description": "Running, jumping, and throwing events for all skill levels",
+        "schedule": "Tuesdays and Thursdays, 3:30 PM - 5:30 PM",
+        "max_participants": 25,
+        "participants": ["sarah@mergington.edu", "lucas@mergington.edu"]
+    },
+    "Art Club": {
+        "description": "Explore various art mediums including painting, drawing, and sculpture",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 18,
+        "participants": ["emily@mergington.edu", "nathan@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Perform in plays and learn acting, stagecraft, and production",
+        "schedule": "Mondays and Thursdays, 4:00 PM - 6:00 PM",
+        "max_participants": 20,
+        "participants": ["ava@mergington.edu", "ethan@mergington.edu"]
+    },
+    "Debate Team": {
+        "description": "Develop critical thinking and public speaking through competitive debates",
+        "schedule": "Fridays, 4:00 PM - 6:00 PM",
+        "max_participants": 16,
+        "participants": ["isabella@mergington.edu", "william@mergington.edu"]
+    },
+    "Science Olympiad": {
+        "description": "Compete in science and engineering challenges at regional and state levels",
+        "schedule": "Tuesdays, 3:30 PM - 5:30 PM",
+        "max_participants": 15,
+        "participants": ["mia@mergington.edu", "jacob@mergington.edu"]
+    },
     "Chess Club": {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
@@ -51,7 +87,6 @@ def root():
 def get_activities():
     return activities
 
-
 @app.post("/activities/{activity_name}/signup")
 def signup_for_activity(activity_name: str, email: str):
     """Sign up a student for an activity"""
@@ -63,5 +98,9 @@ def signup_for_activity(activity_name: str, email: str):
     activity = activities[activity_name]
 
     # Add student
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")
+    
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
